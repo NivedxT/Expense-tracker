@@ -1,100 +1,67 @@
-// src/home/Home.jsx
-import React, { useState } from 'react';
-import './home.css';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import './home.css'; // use for emoji background and overrides
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '../config/config';
+import { useNavigate } from 'react-router-dom';
+
+
 
 export default function Home() {
-    const auth = getAuth(app); // ✅ Define auth here
-    const user = auth.currentUser?.email || 'Unknown';
-    
-    const [expense, setExpense] = useState({
-        title: '',
-        amount: '',
-        category: '',
-        date: ''
-      });
-    const [expenseList, setExpenseList] = useState([]); // ⬅ Store expenses here
-      
-    const handleChange = (e) => {
-        setExpense({
-          ...expense,
-          [e.target.name]: e.target.value
-        });
-      };
-      
-      
-    const handleAddExpense = (e) => {
-        e.preventDefault();
-      
-        // 🆕 Load existing expenses from localStorage
-        const existingExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
-      
-        // 🆕 Add the new expense with a timestamp
-        const updatedExpenses = [...existingExpenses, { ...expense, timestamp: new Date() }];
-      
-        // 🆕 Save back to localStorage
-        localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-      
-        console.log("Expense saved locally:", expense);
-      
-        // 🆕 Reset form input
-        setExpense({
-          title: '',
-          amount: '',
-          category: '',
-          date: ''
-        });
-      
-        // 🆕 (Optional) Reload from localStorage if needed later
-        const savedExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
-    };
-      
+  const auth = getAuth(app);
+  const user = auth.currentUser?.email || 'Unknown';
+  const navigate = useNavigate();
 
-    const handleLogout = () => {
-    signOut(auth).then(() => {
-      console.log('User signed out');
-      // Optionally, redirect to login or homepage
-    }).catch((error) => {
-      console.error('Sign out error', error);
-    });
+
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [expense, setExpense] = useState({
+    title: '',
+    amount: '',
+    category: '',
+    date: ''
+  });
+  useEffect(() => {
+    const EMOJIS = ["💶", "💴", "💵", "💷", "💰", "💸", "🪙", "💳"];
+    const container = document.querySelector(".emoji-bg");
+    if (!container) return;
+  
+    container.innerHTML = ""; // Clear previous emojis
+  
+    for (let i = 0; i < 30; i++) {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji";
+      emoji.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  
+      emoji.style.position = "absolute";
+      emoji.style.top = `${Math.random() * 100}%`;
+      emoji.style.left = `${Math.random() * 100}%`;
+      emoji.style.fontSize = `${2 + Math.random() * 3}rem`;
+      emoji.style.opacity = "0.08";
+      emoji.style.userSelect = "none";
+      emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
+      emoji.style.pointerEvents = "none";
+      container.appendChild(emoji);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    signOut(auth).then(() => console.log('Signed out')).catch(console.error);
   };
 
   return (
     <div className="home-container">
-      <h1>Welcome to the Dashboard</h1>
-      <p className="login-message">You are logged in as: <strong>{getAuth(app).currentUser.email}</strong></p>
+    <div className="emoji-bg"></div>
 
-      <div className="dashboard-options">
-        <form onSubmit={handleAddExpense} className="expense-form">
-          <input type="text" name="title" placeholder="Title" onChange={handleChange} required />
-          <input type="number" name="amount" placeholder="Amount" onChange={handleChange} required />
-          <select name="category" onChange={handleChange} required>
-  <option value="">Select Category</option>
-  <option value="Food & Drinks">🍔 Food & Drinks</option>
-  <option value="Fuel">⛽ Fuel</option>
-  <option value="Groceries">🛒 Groceries</option>
-  <option value="Commute">🚌 Commute</option>
-  <option value="Utility Bills">💡 Utility Bills</option>
-  <option value="Fitness">🏋️ Fitness</option>
-  <option value="Medical">💊 Medical</option>
-  <option value="Money Transfers">💸 Money Transfers</option>
-  <option value="Rent">🏠 Rent</option>
-  <option value="ATM Withdrawal">🏧 ATM Withdrawal</option>
-  <option value="Shopping">🛍️ Shopping</option>
-  <option value="Others">📝 Others</option>
-</select>
-          <input type="date" name="date" onChange={handleChange} required />
-          <button type="submit">Add Expense</button>
-        </form>
-      </div>
-      
-      <div className="logout-button-container">
-        <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
+    <h1>Welcome to the Dashboard</h1>
+    <p>You are logged in as: <strong>{user}</strong></p>
+
+    <div className="card-container">
+      <div className="option-card" onClick={() => navigate('/add-expense')}>➕ Add Expense</div>
+      <div className="option-card" onClick={() => navigate('/view-expenses')}>📊 View Expenses</div>
+      <div className="option-card" onClick={() => navigate('/edit-expenses')}>✏️ Edit Expenses</div>
     </div>
-  );
+
+    <button className="logout-button" onClick={handleLogout}>Logout</button>
+  </div>
+);
 }
+

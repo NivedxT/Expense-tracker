@@ -1,0 +1,19 @@
+.add-expense-container {
+    padding: 2rem;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .expense-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .expense-form input,
+  .expense-form select,
+  .expense-form button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
