@@ -1,121 +1,119 @@
-.view-expenses-wrapper {
+/* Page Container */
+.view-expenses-page {
   position: relative;
-  padding: 2rem 1rem;
-  z-index: 0;
   min-height: 100vh;
-  background-color: transparent;
-  overflow-x: hidden;
+  background: white;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
 }
 
-.emoji-bg {
+/* Floating Emojis - Full Page Coverage */
+.floating-emojis {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: -1;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.emoji {
-  position: absolute;
-  opacity: 0.06;
-  font-size: 2rem;
-  transform: rotate(0deg);
-  user-select: none;
-}
-
-/* Heading */
-.expense-heading {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  z-index: 1;
-  position: relative;
-}
-
-/* Chart Section */
-.chart-container {
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
-  position: relative;
-  z-index: 1;
+  height: 100%;
+  pointer-events: none;
+  font-size: 24px;
+  animation: floatEmojis 15s linear infinite;
+  z-index: 0;
+  opacity: 0.1;
+  white-space: pre-wrap;
+  text-align: center;
+  line-height: 2;
 }
 
-/* Filter Bar */
-.filter-bar {
+@keyframes floatEmojis {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+/* Core Container */
+.view-expenses-container {
+  position: relative;
+  background: #fff;
+  z-index: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  margin: 1.5rem auto;
-  padding: 1rem;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  max-width: 800px;
-  z-index: 1;
-  position: relative;
+  flex-direction: row;
+  max-width: 1200px;
+  width: 100%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 32px;
 }
 
-.filter-dropdown,
-.filter-date {
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+/* Pie Chart Section */
+.left-panel {
+  flex: 1;
+  text-align: center;
+  padding-right: 24px;
+  border-right: 2px solid #eee;
+}
+
+.left-panel h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Filters and Table Section */
+.right-panel {
+  flex: 1.5;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filters select,
+.filters input {
+  padding: 8px 12px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  background-color: white;
-  font-size: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
 }
 
-/* Table Section */
-.expense-table-section {
-  margin-top: 2rem;
-  overflow-x: auto;
-  background: white;
-  padding: 2rem 1rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  z-index: 1;
-  position: relative;
-}
-
-.expense-table {
+/* Table Styling */
+table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
-  font-family: Arial, sans-serif;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.expense-table th,
-.expense-table td {
+thead {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+th, td {
   padding: 12px 16px;
-  border: 1px solid #ddd;
-  text-align: center;
-  white-space: nowrap;
-  background-color: #fff;
+  text-align: left;
+  border-bottom: 1px solid #eee;
 }
 
-.expense-table th {
-  background-color: #f7f7f7;
-  font-weight: 600;
-}
-
-/* Edit Button */
-.edit-button {
-  background-color: transparent;
-  border: 1px solid #3498db;
-  border-radius: 6px;
-  color: #3498db;
-  padding: 0.3rem 0.6rem;
+button {
+  padding: 6px 10px;
+  background-color: #ffc107;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  font-size: 16px;
 }
 
-.edit-button:hover {
-  background-color: #3498db;
-  color: white;
+button:hover {
+  background-color: #ff9800;
 }

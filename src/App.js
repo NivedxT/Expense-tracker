@@ -35,7 +35,7 @@ useEffect(()=>{
       <Route path="/" element={<Home />} />
       <Route path="/add-expense" element={<AddExpense />} />
       <Route path="/view-expenses" element={<ViewExpenses />} />
-      <Route path="/edit-expense/:id" element={<EditExpenses />} />
+      <Route path="/edit-expenses" element={<EditExpenses />} />
     </>
   ) : (
     <Route path="/" element={<Login />} />

@@ -1,90 +1,132 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './EditExpenses.css';
+import { useLocation } from 'react-router-dom';
+import './AddExpense.css';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../config/config';
 
 export default function EditExpenses() {
-  const { id } = useParams(); // this is actually index
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const location = useLocation();
+  const [file,setfile] = useState(null);
+  const [docId, setDocId] = useState();
+  const [expense, setExpense] = useState({
     title: '',
     amount: '',
     category: '',
     date: ''
   });
 
+
+  // fetching document 
   useEffect(() => {
-    const storedExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
-    const expenseToEdit = storedExpenses[parseInt(id)];
-    if (expenseToEdit) {
-      setFormData(expenseToEdit);
-    } else {
-      alert("Expense not found");
-      navigate('/view-expenses');
+ 
+    const fetchExpense = async () => {  
+      const id = location.state?.id;
+      setDocId(id);
+      if (!id) return;
+      const docRef = doc(db, 'expenses', id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setExpense(docSnap.data());
+      } else {
+        console.log("No such document!");
+      }
     }
-  }, [id, navigate]);
+      fetchExpense();
+    },[]);
+
+  useEffect(() => {
+    const EMOJIS = ["📝","💸"];
+    const container = document.querySelector(".emoji-bg");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    for (let i = 0; i < 50; i++) {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji";
+      emoji.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+
+      emoji.style.position = "absolute";
+      emoji.style.top = `${Math.random() * 100}%`;
+      emoji.style.left = `${Math.random() * 100}%`;
+      emoji.style.fontSize = `${2 + Math.random() * 3}rem`;
+      emoji.style.opacity = "0.06";
+      emoji.style.userSelect = "none";
+      emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
+      emoji.style.pointerEvents = "none";
+      container.appendChild(emoji);
+    }
+  }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setExpense({ ...expense, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    const storedExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
-    storedExpenses[parseInt(id)] = formData;
-    localStorage.setItem('expenses', JSON.stringify(storedExpenses));
-    alert("Expense updated successfully!");
-    navigate('/view-expenses');
-  };
+  const handleAddExpense = async(e) => {
+    e.preventDefault();
+   await updateDoc(doc(db, 'expenses',docId), {
+      title: expense.title,
+      amount: parseFloat(expense.amount),
+      category: expense.category,
+      date: expense.date
+    });
+    alert('Expense Updated!');
+   // or redirect to ViewExpenses
+};
+
 
   return (
-    <div className="edit-expense-container">
-      <h2>✏️ Edit Expense</h2>
-      <div className="edit-form">
-        <label>
-          Title:
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-          />
-        </label>
+    <div className="add-expense-container">
+      <div className="emoji-bg"></div>
+      <h2 className="elegant-heading">➕ Add New Expense</h2>
+      <form onSubmit={handleAddExpense} className="expense-form">
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          value={expense.title}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="amount"
+          placeholder="Amount"
+          value={expense.amount}
+          onChange={handleChange}
+          required
+        />
+        <select
+          name="category"
+          value={expense.category}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select Category</option>
+          <option value="Food & Drinks">🍔 Food & Drinks</option>
+          <option value="Fuel">⛽ Fuel</option>
+          <option value="Groceries">🛒 Groceries</option>
+          <option value="Commute">🚌 Commute</option>
+          <option value="Utility Bills">💡 Utility Bills</option>
+          <option value="Fitness">🏋️ Fitness</option>
+          <option value="Medical">💊 Medical</option>
+          <option value="Money Transfers">💸 Money Transfers</option>
+          <option value="Rent">🏠 Rent</option>
+          <option value="ATM Withdrawal">🏧 ATM Withdrawal</option>
+          <option value="Shopping">🛍️ Shopping</option>
+          <option value="Others">📝 Others</option>
+        </select>
+        <input
+          type="date"
+          name="date"
+          value={expense.date}
+          onChange={handleChange}
+          required
+        />
+        <input type="file" onChange={(e)=>console.log(e.target.files[0])}/>
 
-        <label>
-          Amount:
-          <input
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Category:
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Date:
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-          />
-        </label>
-
-        <button className="save-button" onClick={handleSave}>💾 Save</button>
-      </div>
+        <button type="submit">Add Expense</button>
+      </form>
     </div>
   );
 }

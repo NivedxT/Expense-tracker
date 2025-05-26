@@ -1,148 +1,109 @@
 import React, { useEffect, useState } from 'react';
-import './ViewExpenses.css';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Link } from 'react-router-dom';
+import { PieChart, Pie, Cell, Legend } from 'recharts';
+import { db, auth } from '../config/config';
 import { collection, getDocs } from 'firebase/firestore';
-import { db, auth } from '../config/config'; // Make sure these are correctly exported
+import { useNavigate } from 'react-router-dom';
+import './ViewExpenses.css';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a29bfe', '#fd79a8', '#e17055', '#fab1a0'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A18CFF'];
 
-export default function ViewExpenses() {
+const ViewExpenses = () => {
   const [expenses, setExpenses] = useState([]);
-  const [filteredCategory, setFilteredCategory] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchExpenses = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
-
-        const expensesCollection = collection(db, 'expenses',);
-        const snapshot = await getDocs(expensesCollection);
-        const fetchedExpenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setExpenses(fetchedExpenses);
-      } catch (error) {
-        console.error("Error fetching expenses from Firestore:", error);
-      }
+      const querySnapshot = await getDocs(collection(db, 'expenses'));
+      const expensesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setExpenses(expensesData);
+      setFilteredExpenses(expensesData);
+      const uniqueCategories = [...new Set(expensesData.map(exp => exp.category))];
+      setCategories(uniqueCategories);
     };
-
     fetchExpenses();
-    generateFloatingEmojis();
   }, []);
 
-  const generateFloatingEmojis = () => {
-    const EMOJIS = ['💶', '🔎', '💵', '👀'];
-    const container = document.querySelector('.emoji-bg');
-    if (!container) return;
-
-    container.innerHTML = "";
-    for (let i = 0; i < 30; i++) {
-      const emoji = document.createElement("div");
-      emoji.className = "emoji";
-      emoji.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-      emoji.style.position = "absolute";
-      emoji.style.top = `${Math.random() * 100}%`;
-      emoji.style.left = `${Math.random() * 100}%`;
-      emoji.style.fontSize = `${2 + Math.random() * 3}rem`;
-      emoji.style.opacity = "0.08";
-      emoji.style.userSelect = "none";
-      emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
-      emoji.style.pointerEvents = "none";
-      container.appendChild(emoji);
+  useEffect(() => {
+    let filtered = [...expenses];
+    if (selectedCategory) {
+      filtered = filtered.filter(exp => exp.category === selectedCategory);
     }
-  };
+    if (startDate) {
+      filtered = filtered.filter(exp => new Date(exp.date) >= new Date(startDate));
+    }
+    if (endDate) {
+      filtered = filtered.filter(exp => new Date(exp.date) <= new Date(endDate));
+    }
+    setFilteredExpenses(filtered);
+  }, [selectedCategory, startDate, endDate, expenses]);
 
-  const filteredExpenses = expenses.filter(exp => {
-    const matchesCategory = !filteredCategory || exp.category === filteredCategory;
-    const matchesFromDate = !fromDate || new Date(exp.date) >= new Date(fromDate);
-    const matchesToDate = !toDate || new Date(exp.date) <= new Date(toDate);
-    return matchesCategory && matchesFromDate && matchesToDate;
-  });
-
-  const categoryTotals = filteredExpenses.reduce((acc, expense) => {
-    const category = expense.category || 'Uncategorized';
-    acc[category] = (acc[category] || 0) + parseFloat(expense.amount);
+  const data = Object.values(filteredExpenses.reduce((acc, exp) => {
+    acc[exp.category] = acc[exp.category] || { name: exp.category, value: 0 };
+    acc[exp.category].value += Number(exp.amount);
     return acc;
-  }, {});
-
-  const pieData = Object.entries(categoryTotals).map(([name, value]) => ({ name, value }));
+  }, {}));
 
   return (
-   
-<div className="view-expenses-wrapper p-4">
-    <div>
-    <div className="">
-<h2 className="p-4">📊 Expense Breakdown</h2>
-</div>
-    </div>
-   
-    <div className="chart-container">
-      <ResponsiveContainer width="100%" height={250}>
-        <PieChart>
-          <Pie dataKey="value" data={pieData} cx="50%" cy="50%" outerRadius={80} label>
-            {pieData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+    <div className="view-expenses-page">
+      <div className="floating-emojis">💰 💸 🧾 🪙 📝 💵</div>
+      <div className="view-expenses-container">
+        <div className="left-panel">
+          <h2>📊 Expense Breakdown</h2>
+          <PieChart width={400} height={400}>
+            <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={140} label>
+              {data.map((_, index) => (
+                <Cell key={index} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+        </div>
 
-    <div className="filter-bar">
-      <select
-        className="filter-dropdown"
-        value={filteredCategory}
-        onChange={e => setFilteredCategory(e.target.value)}
-      >
-        <option value="">All Categories</option>
-        {[...new Set(expenses.map(e => e.category))].map((cat, idx) => (
-          <option key={idx} value={cat}>{cat}</option>
-        ))}
-      </select>
+        <div className="right-panel">
+          <div className="filters">
+            <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
+              <option value="">All Categories</option>
+              {categories.map((cat, idx) => (
+                <option key={idx} value={cat}>{cat}</option>
+              ))}
+            </select>
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+          </div>
 
-      <input type="date" className="filter-date" value={fromDate} onChange={e => setFromDate(e.target.value)} />
-      <input type="date" className="filter-date" value={toDate} onChange={e => setToDate(e.target.value)} />
-    </div>
-
-    <div className="expense-table-section">
-      {filteredExpenses.length === 0 ? (
-        <p>No expenses found.</p>
-      ) : (
-        <table className="expense-table">
-          <thead>
-            <tr>
-              <th>Title 👀</th>
-              <th>Amount 💰</th>
-              <th>Category</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredExpenses.map((expense, index) => (
-              <tr key={index}>
-                <td>{expense.title}</td>
-                <td>₹{expense.amount}</td>
-                <td>{expense.category}</td>
-                <td>{new Date(expense.date).toLocaleDateString()}</td>
-                <td>
-                  {/* Delete logic for Firestore can be added later */}
-                  <Link to={`/edit-expense/${expense.id}`}>
-                    <button className="edit-button">✏️</button>
-                  </Link>
-                </td>
+          <table>
+            <thead>
+              <tr>
+                <th>Title 👀</th>
+                <th>Amount 💰</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {filteredExpenses.map(exp => (
+                <tr key={exp.id}>
+                  <td>{exp.title}</td>
+                  <td>₹{exp.amount}</td>
+                  <td>{exp.category}</td>
+                  <td>{new Date(exp.date).toLocaleDateString()}</td>
+                  <td>
+                    <button onClick={() => navigate(`/edit/${exp.id}`)}>✏️</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-    
-    
   );
-}
+};
+
+export default ViewExpenses;

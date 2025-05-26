@@ -6,6 +6,7 @@ import { db } from '../config/config';
 
 export default function AddExpense() {
   const navigate = useNavigate();
+  const [file,setfile] = useState(null);
   const [expense, setExpense] = useState({
     title: '',
     amount: '',
@@ -61,6 +62,7 @@ console.log(expense);
    // or redirect to ViewExpenses
 };
 
+
   return (
     <div className="add-expense-container">
       <div className="emoji-bg"></div>
@@ -109,6 +111,8 @@ console.log(expense);
           onChange={handleChange}
           required
         />
+        <input type="file" onChange={(e)=>console.log(e.target.files[0])}/>
+
         <button type="submit">Add Expense</button>
       </form>
     </div>
