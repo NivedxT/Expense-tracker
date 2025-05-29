@@ -1,0 +1,157 @@
+/* src/components/Analytics.css */
+
+.analytics-container {
+    position: relative;
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Important for containing emojis */
+  }
+  
+  /* Ensure emoji-bg styles are defined (similar to home.css and AddExpense.css) */
+  /* You can copy the .emoji-bg and .emoji styles from your home.css here
+     or ensure home.css is globally imported if you want consistency. */
+  /* Example:
+  .emoji-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  
+  .emoji {
+    position: absolute;
+    opacity: 0.38;
+    user-select: none;
+    pointer-events: none;
+    animation: float-emoji linear infinite;
+  }
+  
+  @keyframes float-emoji {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.38; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+  }
+  */
+  
+  .analytics-content {
+    position: relative;
+    z-index: 1; /* Places content above emojis */
+    background: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  .analytics-title {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+  }
+  
+  .analytics-summary {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    margin-bottom: 3rem;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  }
+  
+  .summary-card {
+    background-color: #e8f5e9; /* Light green */
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    flex: 1;
+    min-width: 250px; /* Minimum width for cards */
+    max-width: 40%;
+    text-align: center;
+  }
+  
+  .summary-card h3 {
+    color: #2e7d32; /* Darker green */
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .summary-card p {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #1b5e20; /* Even darker green */
+  }
+  
+  .chart-section {
+    background-color: #f8f8f8;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+  }
+  
+  .chart-section h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .back-button {
+    background-color: #6c757d; /* Gray */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .back-button:hover {
+    background-color: #5a6268; /* Darker gray */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .analytics-content {
+      padding: 1.5rem;
+    }
+    .analytics-summary {
+      flex-direction: column;
+      align-items: center;
+    }
+    .summary-card {
+      max-width: 100%;
+      margin-bottom: 1rem;
+    }
+    .analytics-title {
+      font-size: 1.3rem;
+    }
+    .summary-card h3 {
+      font-size: 1.2rem;
+    }
+    .summary-card p {
+      font-size: 1.5rem;
+    }
+    .chart-section h3 {
+      font-size: 1.3rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .analytics-content {
+      padding: 1rem;
+    }
+    .analytics-title {
+      font-size: 1.8rem;
+    }
+  }

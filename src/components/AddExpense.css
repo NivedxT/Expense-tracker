@@ -17,3 +17,89 @@
     font-size: 1rem;
   }
   
+  .custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+    color: #333;
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 10px 0;
+    transition: 0.3s ease;
+  }
+  
+  .custom-file-upload:hover {
+    background-color: #e0f7fa;
+    border-color: #007acc;
+    color: #007acc;
+  }
+  
+  .custom-file-upload input[type="file"] {
+    display: none;
+  }
+  .file-status {
+    font-size: 0.95rem;
+    color: #28a745;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .preview-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .preview-button:hover {
+    transform: scale(1.2);
+  }
+  
+  .file-action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+  }
+  .upload-status {
+    margin-top: 12px;
+    padding: 12px;
+    background-color: #f4f4f4;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .upload-status-text {
+    color: green;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-right: 12px;
+  }
+  
+  .upload-filename {
+    font-weight: bold;
+    color: green;
+    margin-left: 6px;
+    font-size: 0.95rem;
+  }
+  
+  .status-icon-button {
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .status-icon-button:hover {
+    transform: scale(1.2);
+  }

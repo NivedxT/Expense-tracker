@@ -1,51 +1,50 @@
 import './App.css';
-import React, { use, useEffect, useState } from 'react';
-import {  Routes, Route } from 'react-router-dom';
-import Login from './login/login'; // adjust if the path is different
-import Home from './home/home'; 
+import React, { useEffect, useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Login from './login/login';
+import Home from './home/home';
 import AddExpense from './components/AddExpense';
 import ViewExpenses from './components/ViewExpenses';
 import EditExpenses from './components/EditExpenses';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth'; // Only need onAuthStateChanged for App.js
 import { auth } from './config/config';
+import ManageCategories from './components/ManageCategories';
+import Analytics from './components/Analytics'; // Import the new Analytics component
+
 
 function App() {
-  const[IsLoggedIn, setIsLoggedIn] = useState(false);
-useEffect(()=>{
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/auth.user
-      const uid = user.uid;
-      setIsLoggedIn(true);
-      // ...
-    } else {
-      setIsLoggedIn(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Changed to camelCase
 
-    }
-  });
-},[auth])
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  }, [auth]);
 
 
   return (
     <div>
       <Routes>
-  {IsLoggedIn ? (
-    <>
-      <Route path="/" element={<Home />} />
-      <Route path="/add-expense" element={<AddExpense />} />
-      <Route path="/view-expenses" element={<ViewExpenses />} />
-      <Route path="/edit-expenses" element={<EditExpenses />} />
-    </>
-  ) : (
-    <Route path="/" element={<Login />} />
-  )}
-</Routes>
-
-    
+        {isLoggedIn ? (
+          <>
+            <Route path="/" element={<Home />} /> {/* Home as default logged-in route */}
+            <Route path="/home" element={<Home />} /> {/* Explicit home route */}
+            <Route path="/add-expense" element={<AddExpense />} />
+            <Route path="/view-expenses" element={<ViewExpenses />} />
+            <Route path="/edit/:id" element={<EditExpenses />} />
+            <Route path="/manage-categories" element={<ManageCategories />} />
+            <Route path="/analytics" element={<Analytics />} /> {/* NEW: Analytics Route */}
+          </>
+        ) : (
+          <Route path="/" element={<Login />} /> // Login as default logged-out route
+        )}
+      </Routes>
     </div>
   );
+}
 
-  }
 export default App;
-

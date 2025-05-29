@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AddExpense.css';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../config/config';
-
+import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { app,auth, db } from '../config/config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 export default function AddExpense() {
+  const [userid, setUserid] = useState(null);
+  const [categories, setCategories] = useState([]);
+  
+
   const navigate = useNavigate();
   const [file,setfile] = useState(null);
   const [expense, setExpense] = useState({
@@ -13,7 +18,34 @@ export default function AddExpense() {
     category: '',
     date: ''
   });
+const storage = getStorage(app);
+  useEffect(()=>{
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        setUserid(user.uid);
+        // ...
+      }
+    });
+  },[auth])
+  
+  
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const snapshot = collection(db, 'categories');
+      const data = await getDocs(snapshot);
+      const categoriesList = data.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setCategories(categoriesList);
+    };
 
+    fetchCategories();
+  }, []);
+
+  
   useEffect(() => {
     const EMOJIS = ["➕","💸"];
     const container = document.querySelector(".emoji-bg");
@@ -30,7 +62,7 @@ export default function AddExpense() {
       emoji.style.top = `${Math.random() * 100}%`;
       emoji.style.left = `${Math.random() * 100}%`;
       emoji.style.fontSize = `${2 + Math.random() * 3}rem`;
-      emoji.style.opacity = "0.06";
+      emoji.style.opacity = "0.66";
       emoji.style.userSelect = "none";
       emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
       emoji.style.pointerEvents = "none";
@@ -44,13 +76,19 @@ export default function AddExpense() {
 
   const handleAddExpense = async(e) => {
     e.preventDefault();
+    let fileUrl = 'No receipt uploaded';
+    if (file) {
+      fileUrl = await uploadFileAndGetURL(file);
+    }
 console.log(expense);
 
    await addDoc(collection(db, 'expenses'), {
       title: expense.title,
       amount: parseFloat(expense.amount),
       category: expense.category,
-      date: expense.date
+      date: expense.date,
+      uid: userid,
+      receiptUrl: fileUrl,
     });
     alert('Expense added to Firestore!');
     setExpense({
@@ -61,7 +99,20 @@ console.log(expense);
     });
    // or redirect to ViewExpenses
 };
-
+const uploadFileAndGetURL = async (file) => {
+  try {
+    const storage = getStorage();
+    const uniqueName = `${Date.now()}_${file.name}`;
+    const storageRef = ref(storage, `expense/${uniqueName}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
+    console.log(downloadURL);
+  } catch (error) {
+    console.error("File upload failed:", error);
+    return null;
+  }
+};
 
   return (
     <div className="add-expense-container">
@@ -90,19 +141,11 @@ console.log(expense);
           onChange={handleChange}
           required
         >
-          <option value="">Select Category</option>
-          <option value="Food & Drinks">🍔 Food & Drinks</option>
-          <option value="Fuel">⛽ Fuel</option>
-          <option value="Groceries">🛒 Groceries</option>
-          <option value="Commute">🚌 Commute</option>
-          <option value="Utility Bills">💡 Utility Bills</option>
-          <option value="Fitness">🏋️ Fitness</option>
-          <option value="Medical">💊 Medical</option>
-          <option value="Money Transfers">💸 Money Transfers</option>
-          <option value="Rent">🏠 Rent</option>
-          <option value="ATM Withdrawal">🏧 ATM Withdrawal</option>
-          <option value="Shopping">🛍️ Shopping</option>
-          <option value="Others">📝 Others</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
         </select>
         <input
           type="date"
@@ -111,7 +154,46 @@ console.log(expense);
           onChange={handleChange}
           required
         />
-        <input type="file" onChange={(e)=>console.log(e.target.files[0])}/>
+    <label className="custom-file-upload">
+  📎 Upload Receipt
+  <input
+    type="file"
+    onChange={(e) => {
+      const selectedFile = e.target.files[0];
+      setfile(selectedFile);
+    }}
+  />
+</label>
+
+{file && (
+  <div className="upload-status">
+    <div className="upload-status-text">
+      ✅ File ready to upload:
+      <span className="upload-filename">{file.name}</span>
+    </div>
+    <div className="file-action-buttons">
+      <button
+        type="button"
+        className="status-icon-button"
+        title="Preview"
+        onClick={() => window.open(URL.createObjectURL(file), '_blank')}
+      >
+        👁️
+      </button>
+      <button
+        type="button"
+        className="status-icon-button"
+        title="Remove"
+        onClick={() => setfile(null)}
+      >
+        ❌
+      </button>
+    </div>
+  </div>
+)}
+
+
+
 
         <button type="submit">Add Expense</button>
       </form>

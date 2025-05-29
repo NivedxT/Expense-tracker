@@ -128,10 +128,10 @@
 }
 
 .option-card {
-  width: 220px;
-  background: white;
+  width: 320px;
+  background: transparent;
   border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: transparent;
   padding: 2rem;
   text-align: center;
   font-size: 1.2rem;
