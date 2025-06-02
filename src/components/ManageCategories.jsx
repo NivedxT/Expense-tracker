@@ -136,7 +136,7 @@ const ManageCategories = () => {
           ))}
         </tbody>
       </table>
-           </div>
+           </div>         
        </div>
     </div>
   );

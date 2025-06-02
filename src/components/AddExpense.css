@@ -103,3 +103,34 @@
   .status-icon-button:hover {
     transform: scale(1.2);
   }
+  /* In AddExpense.css */
+/* In EditExpense.css */
+/* In ManageCategories.css */
+/* In ViewExpenses.css */
+
+.elegant-home-button {
+  display: inline-block; /* Or block, depending on desired layout */
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #6c63ff; /* A stylish purple */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 20px; /* Consistent margin from above elements */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .elegant-home-button:hover {
+  background-color: #564ed1; /* Darker shade on hover */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+ }
+ 
+ .elegant-home-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.5); /* Subtle focus ring */
+ }

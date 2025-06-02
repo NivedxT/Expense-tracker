@@ -1,46 +1,32 @@
 /* src/components/Analytics.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
 .analytics-container {
     position: relative;
     min-height: 100vh;
     padding: 2rem;
     display: flex;
+    border-radius: 15px;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Keep content top-aligned */
+    box-sizing: border-box;
     overflow: hidden; /* Important for containing emojis */
   }
   
   /* Ensure emoji-bg styles are defined (similar to home.css and AddExpense.css) */
   /* You can copy the .emoji-bg and .emoji styles from your home.css here
      or ensure home.css is globally imported if you want consistency. */
-  /* Example:
-  .emoji-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
+
   
-  .emoji {
-    position: absolute;
-    opacity: 0.38;
-    user-select: none;
-    pointer-events: none;
-    animation: float-emoji linear infinite;
-  }
-  
-  @keyframes float-emoji {
-    0% { transform: translateY(0) rotate(0deg); opacity: 0.38; }
-    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-  }
-  */
   
   .analytics-content {
-    position: relative;
+    position: auto;
     z-index: 1; /* Places content above emojis */
     background: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
     padding: 2.5rem;
@@ -53,9 +39,11 @@
   }
   
   .analytics-title {
+    position: auto;
     font-size: 1.7rem;
     font-weight: bold;
     color: #333;
+    
     margin-bottom: 2rem;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
   }
@@ -106,8 +94,8 @@
   }
   
   .back-button {
-    background-color: #6c757d; /* Gray */
-    color: white;
+    background-color: #f0f0f0; /* Gray */
+    color: rgb(0, 0, 0);
     padding: 12px 25px;
     border: none;
     border-radius: 8px;
@@ -117,7 +105,7 @@
   }
   
   .back-button:hover {
-    background-color: #5a6268; /* Darker gray */
+    background-color: #bec3c7; /* Darker gray */
   }
   
   /* Responsive adjustments */
@@ -155,3 +143,81 @@
       font-size: 1.8rem;
     }
   }
+  /* In AddExpense.css */
+/* In EditExpense.css */
+/* In ManageCategories.css */
+/* In ViewExpenses.css */
+
+.elegant-home-button {
+  display: inline-block; /* Or block, depending on desired layout */
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #6c63ff; /* A stylish purple */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 20px; /* Consistent margin from above elements */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .elegant-home-button:hover {
+  background-color: #564ed1; /* Darker shade on hover */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+ }
+ 
+ .elegant-home-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.5); /* Subtle focus ring */
+ }
+ .chart-section {
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  overflow: hidden;
+}
+
+.chart-section.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+}
+.table-section {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.table-section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.spend-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.spend-table th,
+.spend-table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+.spend-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.spend-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
