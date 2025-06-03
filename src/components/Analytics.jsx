@@ -5,6 +5,8 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
+  Line,
+  LineChart,
 } from 'recharts';
 import './Analytics.css';
 
@@ -13,13 +15,33 @@ const Analytics = () => {
   const [monthlySpendData, setMonthlySpendData] = useState([]);
   const [categorySpendData, setCategorySpendData] = useState([]); // New state for category spending
   const [highestSpendDay, setHighestSpendDay] = useState(null);
+  const [categoryTrendData, setCategoryTrendData] = useState([]); // New state for category trend data
+  const [selectedCategory, setSelectedCategory] = useState(null); // Track the selected category
   const [averageMonthlySpend, setAverageMonthlySpend] = useState(0);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [allExpenses, setAllExpenses] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [dailySpendData, setDailySpendData] = useState([]);
   const navigate = useNavigate();
-
+    // Handle category click
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    const categoryExpenses = allExpenses.filter(expense => expense.category === category);
+    
+    const monthlySpends = {};
+    monthsTemplate.forEach(month => {
+      monthlySpends[month.value] = 0;
+    });
+    categoryExpenses.forEach(expense => {
+      const month = new Date(expense.date).getMonth() + 1;
+      monthlySpends[month] += expense.amount;
+    });
+    const trendData = monthsTemplate.map(month => ({
+      month: `${month.month} ${selectedYear}`,
+      spend: parseFloat(monthlySpends[month.value].toFixed(2)),
+    }));
+    setCategoryTrendData(trendData);
+  };
   const monthsTemplate = [
     { month: 'Jan', value: 1 },
     { month: 'Feb', value: 2 },
@@ -34,7 +56,30 @@ const Analytics = () => {
     { month: 'Nov', value: 11 },
     { month: 'Dec', value: 12 },
   ];
-
+  useEffect(() => {
+      const EMOJIS = ["➕", "💸"];
+      const container = document.querySelector(".emoji-bg");
+      if (!container) return;
+  
+      container.innerHTML = "";
+  
+      for (let i = 0; i < 30; i++) {
+        const emoji = document.createElement("div");
+        emoji.className = "emoji";
+        emoji.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  
+        emoji.style.position = "absolute";
+        emoji.style.top = `${Math.random() * 100}%`;
+        emoji.style.left = `${Math.random() * 100}%`;
+        emoji.style.fontSize = `${2 + Math.random() * 3}rem`;
+        emoji.style.opacity = "0.66";
+        emoji.style.userSelect = "none";
+        emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
+        emoji.style.pointerEvents = "none";
+        container.appendChild(emoji);
+      }
+    }, []);
+  
   // Monitor Auth State
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -137,7 +182,7 @@ const Analytics = () => {
       setAverageMonthlySpend((totalYearSpend / 12).toFixed(2));
     }
   }, [allExpenses, selectedYear]);
-
+  
   // Daily Spend Graph Handler
   const handleMonthClick = (monthIndex) => {
     const monthValue = monthsTemplate[monthIndex].value;
@@ -255,39 +300,6 @@ const Analytics = () => {
             <p>No monthly spend data available for {selectedYear}.</p>
           )}
         </div>
-
-        {/* New Category-wise Spend Graph */}
-        <div className="chart-section" style={{ marginTop: '3rem' }}>
-          <h3>Category-wise Spend ({selectedYear})</h3>
-          {categorySpendData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={categorySpendData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <XAxis
-                  dataKey="category"
-                  tick={{ fill: '#333', fontSize: 12 }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
-                />
-                <YAxis tickFormatter={(value) => `₹${value}`} tick={{ fill: '#333' }} />
-                <Tooltip formatter={(value) => [`₹${value}`, 'Spend']} labelStyle={{ color: '#333' }} />
-                <Legend />
-                <Bar
-                  dataKey="spend"
-                  fill="#82ca9d"
-                  name="Category Spend"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <p>No category spend data available for {selectedYear}.</p>
-          )}
-        </div>
-
         {selectedMonth && dailySpendData.length > 0 && (
           <div className="chart-section" style={{ marginTop: '3rem' }}>
             <h3>
@@ -331,11 +343,79 @@ const Analytics = () => {
           </div>
         )}
 
+        {/* New Category-wise Spend Graph */}
+        <div className="chart-section" style={{ marginTop: '3rem' }}>
+          <h3>Category-wise Spend ({selectedYear})</h3>
+          {categorySpendData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={categorySpendData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <XAxis
+                  dataKey="category"
+                  tick={{ fill: '#333', fontSize: 12 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis tickFormatter={(value) => `₹${value}`} tick={{ fill: '#333' }} />
+                <Tooltip formatter={(value) => [`₹${value}`, 'Spend']} labelStyle={{ color: '#333' }} />
+                <Legend />
+               <Bar
+                dataKey="spend"
+                fill="#82ca9d"
+                name="Category Spend"
+                radius={[4, 4, 0, 0]}
+                onClick={(data) => handleCategoryClick(data.category)} // Handle category click
+                />
+
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <p>No category spend data available for {selectedYear}.</p>
+          )}
+        </div>
+        <div>
+          
+
+
+{selectedCategory && categoryTrendData.length > 0 && (
+  <div className="chart-section" style={{ marginTop: '3rem' }}>
+    <h3>Monthly Spend Trend for {selectedCategory} ({selectedYear})</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart
+        data={categoryTrendData}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
+        <XAxis dataKey="month" tick={{ fill: '#333', fontSize: 12 }} />
+        <YAxis tickFormatter={(value) => `₹${value}`} tick={{ fill: '#333' }} />
+        <Tooltip formatter={(value) => [`₹${value}`, 'Spend']} labelStyle={{ color: '#333' }} />
+        <Legend />
+        <Line type="monotone" dataKey="spend" stroke="#6c63ff" strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+      {selectedMonth && (
+              <button
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setCategoryTrendData([]);
+                }}
+                className="back-button"
+                style={{ marginTop: '1rem' }}
+              >
+                🔙 Hide Category View
+              </button>
+            )}
+    
+        </div>
+        )}
         <button onClick={handleBackButtonClick} className="back-button">
           🏠 Back to Home
         </button>
       </div>
     </div>
+  </div>
   );
 };
 

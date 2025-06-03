@@ -1,3 +1,5 @@
+/* ViewExpenses.css */
+
 /* Page Container */
 .view-expenses-page {
   position: relative;
@@ -8,117 +10,204 @@
   justify-content: center;
   align-items: center;
   padding: 40px;
+  box-sizing: border-box; /* Ensures padding doesn't add to total width/height */
 }
+
 /* Core Container */
 .view-expenses-container {
   position: relative;
   background: #fff;
   z-index: 1;
   display: flex;
-  flex-direction: row;
-  max-width: 1200px;
-  width: 100%;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-  border-radius: 16px;
+  flex-direction: row; /* Default to horizontal layout for larger screens */
+  max-width: 1200px; /* Max width for the entire content area */
+  width: 100%; /* Take full width up to max-width */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1); /* Soft shadow for depth */
+  border-radius: 16px; /* Rounded corners for the container */
   padding: 32px;
+  box-sizing: border-box;
 }
 
-/* Pie Chart Section */
+/* Left Panel: Pie Chart Section */
 .left-panel {
-  flex: 1;
+  flex: 1; /* Allows it to grow and shrink */
   text-align: center;
   padding-right: 24px;
-  border-right: 2px solid #eee;
+  border-right: 2px solid #eee; /* Separator line */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  justify-content: flex-start; /* Align content to top */
 }
 
 .left-panel h2 {
   font-size: 28px;
   margin-bottom: 20px;
+  color: #333;
 }
+
+/* Right Panel: Filters, Table, and Buttons Section */
 .right-panel {
-  margin-left: 20px; /* Or more if needed */
-  padding-left: 10px;
+  flex: 2; /* Give more space to the right panel */
+  margin-left: 30px; /* Space from the left panel */
+  padding-left: 10px; /* Inner padding */
+  display: flex;
+  flex-direction: column; /* Arrange content vertically */
+  justify-content: space-between; /* Distribute space vertically: filters at top, buttons at bottom, table in between */
 }
-/* Filters and Table Section */
-.right-panel select,
-.right-panel input[type="date"] {
-  padding: 8px 12px;
+
+/* Styles for the Filters and Sort Section */
+.filters-and-sort-section {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  gap: 15px; /* Spacing between filter elements */
+  margin-bottom: 25px; /* Space below the filter section */
+  padding: 15px;
+  background-color: #f9f9f9; /* Light background for the section */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow */
+  align-items: center; /* Vertically center items */
+}
+
+.filters-and-sort-section input[type="text"],
+.filters-and-sort-section input[type="number"],
+.filters-and-sort-section input[type="date"],
+.filters-and-sort-section select {
+  flex: 1; /* Allow items to grow and shrink */
+  min-width: 120px; /* Minimum width for inputs/selects */
+  padding: 10px 15px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   font-size: 15px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: border 0.2s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  -webkit-appearance: none; /* Remove default styling for selects */
+  -moz-appearance: none;
+  appearance: none;
+  /* Custom arrow for selects (base64 SVG) */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%20197.6l-14.4-14.4L146.2%20259.2%2019.8%20183.2%205.4%20197.6l140.8%20140.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  cursor: pointer;
 }
 
-.right-panel select:focus,
-.right-panel input[type="date"]:focus {
-  border-color: #0088fe;
+.filters-and-sort-section input[type="date"] {
+  background-image: none; /* Remove custom arrow for date input */
+}
+
+.filters-and-sort-section input:focus,
+.filters-and-sort-section select:focus {
+  border-color: #6c63ff; /* Highlight color on focus */
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2); /* Subtle glow on focus */
   outline: none;
+}
+
+/* Styles for the bottom buttons container */
+.bottom-buttons-container {
+  display: flex;
+  justify-content: space-between; /* Pushes buttons to opposite ends of the container */
+  align-items: center; /* Vertically center buttons */
+  margin-top: 20px; /* Space above the buttons from the table */
+  padding-top: 15px; /* Padding above buttons */
+  border-top: 1px solid #eee; /* A subtle separator line */
+}
+
+/* Style for the "Add New Expense" button */
+.add-expense-button {
+  background-color: #6c63ff; /* A stylish purple */
+  color: white;
+  border: none;
+  border-radius: 10px; /* Consistent with elegant-home-button */
+  padding: 10px 20px; /* Consistent with elegant-home-button */
+  font-size: 1rem;
+  font-weight: 500; /* Consistent with elegant-home-button */
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.add-expense-button:hover {
+  background-color: #564ed1; /* Darker shade on hover */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 /* Table Styling */
 table {
   width: 100%;
-  border-collapse: collapse;
-  background: #fafafa;
+  border-collapse: collapse; /* Remove double borders */
+  background: #fafafa; /* Light background for table */
   border-radius: 8px;
-  overflow: hidden;
+  overflow: hidden; /* Ensures rounded corners apply to content */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Added shadow to table */
 }
 
 thead {
-  background: #f5f5f5;
+  background: #f5f5f5; /* Header background */
   font-weight: bold;
 }
 
 th, td {
   padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eee; /* Separator between rows */
 }
 
-button {
-  padding: 6px 10px;
-  background-color: #6f6c62;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #d8d2c7;
-}
-
+/* Button styles for table actions (Edit, Delete, View Receipt) */
 .action-buttons {
   display: flex;
-  gap: 10px; /* Creates space between the buttons */
+  gap: 8px; /* Space between action buttons */
   justify-content: center;
   align-items: center;
 }
 .action-buttons button {
-  background-color: yellow;
+  background-color: #e0e0e0; /* Neutral background */
+  color: #333;
   border: none;
-  border-radius: 8px;
-  padding: 6px 10px;
+  border-radius: 6px; /* Slightly more rounded */
+  padding: 8px 12px; /* Adjusted padding */
   cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: transform 0.1s ease-in-out, background-color 0.2s;
+  font-size: 15px; /* Slightly smaller font */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.15s ease-in-out, background-color 0.2s, box-shadow 0.2s;
 }
-
 
 .action-buttons button:hover {
-  transform: scale(1.1);
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.action-buttons button:nth-child(1) {
-  background-color: #ffd60a; /* Edit button color */
+.action-buttons button:nth-child(1) { /* Edit button */
+  background-color: #ffc107; /* Yellow */
+}
+.action-buttons button:nth-child(1):hover {
+  background-color: #e0a800; /* Darker yellow */
 }
 
-.action-buttons button:nth-child(2) {
-  background-color: #ff6b6b; /* Delete button color */
+.action-buttons button:nth-child(2) { /* Delete button */
+  background-color: #dc3545; /* Red */
+  color: white; /* White text for contrast */
 }
+.action-buttons button:nth-child(2):hover {
+  background-color: #c82333; /* Darker red */
+}
+
+.action-buttons button:nth-child(3) { /* View Receipt button */
+  background-color: #17a2b8; /* Cyan */
+  color: white; /* White text for contrast */
+}
+.action-buttons button:nth-child(3):hover {
+  background-color: #138496; /* Darker cyan */
+}
+.action-buttons button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
 
 .total-expense-display {
   margin-top: 1rem;
@@ -127,13 +216,10 @@ button:hover {
   text-align: center;
   color: #2f2f2f;
 }
-/* In AddExpense.css */
-/* In EditExpense.css */
-/* In ManageCategories.css */
-/* In ViewExpenses.css */
 
+/* General elegant button style (used for "Go to Home") */
 .elegant-home-button {
-  display: inline-block; /* Or block, depending on desired layout */
+  display: inline-block;
   padding: 10px 20px;
   font-size: 1rem;
   font-weight: 500;
@@ -145,16 +231,86 @@ button:hover {
   text-align: center;
   text-decoration: none;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  margin-top: 20px; /* Consistent margin from above elements */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
- }
- 
- .elegant-home-button:hover {
+  onMouseOver:'0 4px 12px rgba(0,0,0,0.2)'
+}
+
+.elegant-home-button:hover {
   background-color: #564ed1; /* Darker shade on hover */
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
- }
- 
- .elegant-home-button:focus {
+}
+
+.elegant-home-button:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.5); /* Subtle focus ring */
- }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 992px) {
+  .view-expenses-container {
+    flex-direction: column; /* Stack panels vertically */
+    padding: 20px;
+  }
+  .left-panel {
+    padding-right: 0;
+    border-right: none;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee; /* Separator when stacked */
+    margin-bottom: 20px;
+  }
+  .right-panel {
+    margin-left: 0;
+    padding-left: 0;
+  }
+  .filters-and-sort-section {
+    flex-direction: column; /* Stack filters vertically on small screens */
+    align-items: stretch; /* Stretch items to full width */
+  }
+  .filters-and-sort-section input,
+  .filters-and-sort-section select {
+    min-width: unset; /* Remove min-width constraint */
+    width: 100%; /* Take full width */
+  }
+  .bottom-buttons-container {
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 15px; /* Add gap between stacked buttons */
+    align-items: stretch; /* Stretch buttons to full width */
+  }
+  .add-expense-button,
+  .elegant-home-button {
+    width: 100%; /* Full width buttons */
+    padding: 12px 18px; /* Slightly larger touch target */
+  }
+}
+
+@media (max-width: 480px) {
+  .view-expenses-page {
+    padding: 15px;
+  }
+  .view-expenses-container {
+    padding: 15px;
+  }
+  .left-panel h2 {
+    font-size: 24px;
+  }
+  .total-expense-display {
+    font-size: 1rem;
+  }
+  .filters-and-sort-section {
+    padding: 10px;
+    gap: 10px;
+  }
+  .filters-and-sort-section input,
+  .filters-and-sort-section select {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+  th, td {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .action-buttons button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}
